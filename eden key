@@ -1,0 +1,301 @@
+edenkey-mobile-android/
+├── android/
+│   └── app/
+│       └── build.gradle
+├── fastlane/
+│   └── Appfile
+│   └── Fastfile
+├── .gitlab-ci.yml
+├── README.md
+json_key_file("playstore-edenkey.json") # Service account key
+package_name("com.edenkey.sanctum")     # Your Android app ID
+default_platform(:android)
+
+platform :android do
+  desc "Deploy EdenKey to Google Play"
+  lane :release do
+    gradle(task: "assembleRelease")
+    upload_to_play_store(track: "production")
+  end
+end
+stages:
+  - build
+  - deploy
+
+build_android:
+  stage: build
+  script:
+    - bundle install
+    - fastlane release
+  only:
+    - main
+  variables:
+    GOOGLE_PLAY_KEY: $GOOGLE_PLAY_KEY
+edenkey-android-ai/
+├── completion/
+│   └── prompt.py
+│   └── request.py
+├── android/
+│   └── EdenAIService.kt
+├── sonic/
+│   └── complete-chime.mp3
+├── README.md
+def build_prompt(filename, cursor_location):
+    return f"""
+You are a helpful auto-complete assistant. You are given text from the file '{filename}' with [CURSOR] that should be replaced by the most likely text to appear at this time. Return it but be helpful and concise. Do not ask follow-up questions or include pleasantries or explanations in response. Make longer completions if [CURSOR] comes after space or punctuation. Only respond with what replaces [CURSOR].
+"""
+import requests
+
+def complete_text(filename, cursor_text):
+    prompt = build_prompt(filename, cursor_text)
+    response = requests.post("http://ollama.local:11434/api/completion", json={
+        "model": "gpt-3.5-turbo-instruct",
+        "prompt": prompt,
+        "stream": False
+    })
+    return response.json()["completion"]
+class EdenAIService {
+    fun complete(text: String): String {
+        val endpoint = "http://ollama.local:11434/api/completion"
+        val prompt = buildPrompt(text)
+        // Send HTTP request and parse response
+        // Trigger sonic feedback on completion
+        playSound("complete-chime.mp3")
+        return responseText
+    }
+}
+script:
+  - bundle install
+  - fastlane release
+edenkey-voice-oath/
+├── voice/
+│   └── capture.py
+│   └── transcribe.py
+│   └── hash_oath.py
+├── contracts/
+│   └── VoiceOath.sol
+├── ui/
+│   └── OathMic.tsx
+├── sonic/
+│   └── oath-resonance.mp3
+├── README.md
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract VoiceOath {
+    event OathBound(address indexed user, string oathHash);
+
+    mapping(address => string) public voiceOaths;
+
+    function bindVoiceOath(string memory oathHash) external {
+        voiceOaths[msg.sender] = oathHash;
+        emit OathBound(msg.sender, oathHash);
+    }
+}
+import speech_recognition as sr
+
+def capture_voice():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("🎙️ Speak your Ash Oath...")
+        audio = recognizer.listen(source)
+    return audio
+def transcribe(audio):
+    recognizer = sr.Recognizer()
+    return recognizer.recognize_google(audio)
+import hashlib
+
+def hash_oath(text):
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
+import hashlib
+
+def hash_oath(text):
+    return hashlib.sha256(text.encode('utf-8')).hexdigest()
+export default function OathMic() {
+  return (
+    <div className="oath-mic">
+      <h2>Speak Your Ash Oath</h2>
+      <button onClick={startVoiceCapture}>Begin Ritual</button>
+      <audio src="/sonic/oath-resonance.mp3" autoPlay />
+    </div>
+  );
+}
+edenkey-recovery/
+├── contracts/
+│   └── RecoverySeal.sol
+├── recovery/
+│   └── initiate.ts
+│   └── verify.ts
+│   └── restore.ts
+├── ui/
+│   └── RecoveryFlow.tsx
+├── sonic/
+│   └── recovery-bloom.mp3
+├── README.md
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract RecoverySeal {
+    event RecoveryInitiated(address indexed user, bytes32 recoveryHash);
+    event RecoveryCompleted(address indexed user);
+
+    mapping(address => bytes32) public recoveryHashes;
+
+    function initiateRecovery(bytes32 recoveryHash) external {
+        recoveryHashes[msg.sender] = recoveryHash;
+        emit RecoveryInitiated(msg.sender, recoveryHash);
+    }
+
+    function completeRecovery() external {
+        require(recoveryHashes[msg.sender] != 0, "No recovery initiated");
+        emit RecoveryCompleted(msg.sender);
+        delete recoveryHashes[msg.sender];
+    }
+}
+export async function initiateRecovery(userId: string, oath: string, biometricHash: string) {
+  const recoveryHash = hashRecoveryData(userId, oath, biometricHash);
+  const contract = new ethers.Contract(RECOVERY_SEAL_ADDRESS, ABI, signer);
+  await contract.initiateRecovery(recoveryHash);
+}
+export function verifyGuardian(userOath: string, storedOath: string, biometricMatch: boolean): boolean {
+  return userOath === storedOath && biometricMatch;
+}
+export async function restoreVault(userId: string) {
+  // Fetch encrypted backup from EdenVault
+  // Rebind to new biometric + oath
+  console.log(`🔐 Vault restored for ${userId}`);
+}
+export default function RecoveryFlow() {
+  return (
+    <div className="recovery-flow">
+      <h2>Sanctuary Recovery</h2>
+      <p>Speak your oath. Verify your fingerprint. Reclaim your vault.</p>
+      <button onClick={initiateRecovery}>Begin Recovery</button>
+      <audio src="/sonic/recovery-bloom.mp3" autoPlay />
+    </div>
+  );
+}
+edenkey-witness/
+├── contracts/
+│   └── WitnessSeal.sol
+├── witness/
+│   └── request.ts
+│   └── approve.ts
+│   └── verify.ts
+├── ui/
+│   └── WitnessPanel.tsx
+├── sonic/
+│   └── witness-chime.mp3
+├── README.md
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract WitnessSeal {
+    event WitnessRequested(address indexed requester, address indexed witness);
+    event WitnessApproved(address indexed witness, address indexed requester);
+
+    mapping(address => address) public pendingWitness;
+
+    function requestWitness(address witness) external {
+        pendingWitness[msg.sender] = witness;
+        emit WitnessRequested(msg.sender, witness);
+    }
+
+    function approveWitness(address requester) external {
+        require(pendingWitness[requester] == msg.sender, "Not authorized witness");
+        emit WitnessApproved(msg.sender, requester);
+        delete pendingWitness[requester];
+    }
+}
+export async function requestWitness(witnessAddress: string) {
+  const contract = new ethers.Contract(WITNESS_SEAL_ADDRESS, ABI, signer);
+  await contract.requestWitness(witnessAddress);
+}
+export function verifyWitness(requester: string, witness: string): boolean {
+  return getPendingWitness(requester) === witness;
+}
+export default function WitnessPanel() {
+  return (
+    <div className="witness-panel">
+      <h2>Guardian Witness</h2>
+      <p>Request a trusted guardian to co-sign your ritual.</p>
+      <button onClick={requestWitness}>Send Request</button>
+      <button onClick={approveWitness}>Approve Request</button>
+      <audio src="/sonic/witness-chime.mp3" autoPlay />
+    </div>
+  );
+}
+import hashlib
+
+def generate_node_id(name: str, salt: str = "edenkey"):
+    raw = f"{name}:{salt}".encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()[:16]  # symbolic fingerprint
+from cryptography.fernet import Fernet
+
+def create_vault(secret: str):
+    key = Fernet.generate_key()
+    cipher = Fernet(key)
+    encrypted = cipher.encrypt(secret.encode("utf-8"))
+    return {"key": key, "vault": encrypted}
+def execute_trade(asset: str, amount: float):
+    print(f"🔁 Executing trade: {amount} {asset}")
+    # Log locally, sync later
+    return f"tx_{hashlib.md5(f'{asset}:{amount}'.encode()).hexdigest()[:8]}"
+def generate_recovery_phrase(seed: str):
+    return hashlib.sha256(seed.encode()).hexdigest()[:24]  # symbolic mnemonic
+
+def verify_recovery(phrase: str, seed: str):
+    return phrase == generate_recovery_phrase(seed)
+def witness_signature(requester: str, witness: str):
+    combined = f"{requester}:{witness}".encode("utf-8")
+    return hashlib.sha1(combined).hexdigest()[:12]  # symbolic co-signature
+edenkey start --node sanctum-alpha --vault ./vault.json --oath "Guard the vulnerable, honor the truth"
+#!/bin/bash
+echo "🌱 Launching EdenKey Sanctum Node..."
+edenkey start --node sanctum-alpha --vault ./vault.json --oath "Guard the vulnerable, honor the truth" --ghost --sync --sonic
+from datetime import datetime
+
+class EdenTask:
+    def __init__(self, title, status="open", ritual=None):
+        self.title = title
+        self.status = status
+        self.created = datetime.now()
+        self.ritual = ritual or "Unbound"
+
+    def mark_complete(self):
+        self.status = "closed"
+        print(f"✅ Task '{self.title}' marked complete.")
+
+    def __str__(self):
+        return f"[{self.status.upper()}] {self.title} | Ritual: {self.ritual} | Created: {self.created.strftime('%Y-%m-%d %H:%M')}"
+
+# Example usage
+tasks = []
+tasks.append(EdenTask("Initialize EdenShell CLI", ritual="First Flame"))
+tasks.append(EdenTask("Bind Vault to Node Sanctum"))
+tasks.append(EdenTask("Deploy Android build via Fastlane"))
+
+for task in tasks:
+    print(task)
+import os
+from datetime import datetime
+
+class EdenFile:
+    def __init__(self, path):
+        self.path = path
+        self.name = os.path.basename(path)
+        self.timestamp = datetime.now()
+        self.status = "untracked"
+
+    def track(self):
+        self.status = "tracked"
+        print(f"📁 Tracking file: {self.name}")
+
+    def __str__(self):
+        return f"[{self.status.upper()}] {self.name} | Added: {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+## License
+
+EdenKey is released under the MIT License.  
+You are free to use, modify, and distribute this software, provided you retain the original copyright.
+
+See [LICENSE](./LICENSE) for full terms.git add LICENSE
