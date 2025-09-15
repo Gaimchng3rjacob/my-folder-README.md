@@ -47,3 +47,4 @@ for task in tasks:
 #!/bin/bash
 echo "🌱 Launching EdenKey Sanctum Node..."
 edenkey start --node sanctum-alpha --vault ./vault.json --oath "Guard the vulnerable, honor the truth" --ghost --sync --sonic
+RajaPremSai:feat/gemini-extension-setup
