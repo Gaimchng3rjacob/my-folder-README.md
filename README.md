@@ -48,3 +48,25 @@ for task in tasks:
 echo "🌱 Launching EdenKey Sanctum Node..."
 edenkey start --node sanctum-alpha --vault ./vault.json --oath "Guard the vulnerable, honor the truth" --ghost --sync --sonic
 RajaPremSai:feat/gemini-extension-setup
+# Termite DivineArtist Ministry — EdenKey Project
+
+## 🔥 Mission
+To merge spiritual warfare with digital innovation, unlocking divine access through creative technology.
+
+## ✝️ Features
+- Devotional artwork powered by scripture
+- Gemini extension setup for enhanced spiritual engagement
+- GitHub-integrated ministry workflow
+
+## 📅 Milestone: EdenKey Genesis Launch
+This milestone includes foundational commits, branding, and content integration.
+
+## 🏷️ Labels
+Organized by theme: `devotional`, `branding`, `documentation`, `feature`, `spiritual-warrior`
+
+## 🙌 Contributors
+- Gaimchng3rjacob — Lead visionary and developer
+To merge spiritual warfare with digital innovation, unlocking divine access through creative technology.
+- Devotional artwork powered by scripture  
+- Gemini extension setup for enhanced spiritual engagement  
+- GitHub-integrated ministry workflow  
