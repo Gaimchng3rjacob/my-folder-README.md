@@ -48,7 +48,8 @@ for task in tasks:
 echo "🌱 Launching EdenKey Sanctum Node..."
 edenkey start --node sanctum-alpha --vault ./vault.json --oath "Guard the vulnerable, honor the truth" --ghost --sync --sonic
 RajaPremSai:feat/gemini-extension-setup
-# Termite DivineArtist Ministry — EdenKey Project
+# # tmitecrypto — EdenKey App
+
 
 ## 🔥 Mission
 To merge spiritual warfare with digital innovation, unlocking divine access through creative technology.
